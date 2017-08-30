@@ -22,17 +22,24 @@ public class RedisJsonSerializer<T> implements RedisSerializer<T> {
 
     @Override
     public byte[] serialize(T o) throws SerializationException {
+        byte[] defReturn = new byte[1];
         try {
+            if (o == null) {
+                return defReturn;
+            }
             return objectMapper.writeValueAsBytes(o);
         } catch (Exception e) {
             LOG.error("objectMapper writeValueAsBytes exception", e);
-            return new byte[0];
+            return defReturn;
         }
     }
 
     @Override
     public T deserialize(byte[] bytes) throws SerializationException {
         try {
+            if (bytes == null) {
+                return null;
+            }
             return objectMapper.readValue(bytes, cls);
         } catch (Exception e) {
             LOG.error("objectMapper readValue exception", e);
